@@ -19,6 +19,7 @@ We can start a DDP job by
 pip install dlrover[torch] -U
 dlrover-run --max_restarts=2 --nproc_per_node=2 fcp_demo.py
 
+python -m grpc_tools.protoc  --proto_path=. --python_out=. --grpc_python_out=. dlrover/proto/*.proto
 PYTHONPATH=$PYTHONPATH:$PWD:/lpai/dlrover/dlrover/proto python dlrover/trainer/torch/main.py --max_restarts=2 --nproc_per_node=2 examples/pytorch/fcp_demo.py
 ```
 """
@@ -68,7 +69,7 @@ if __name__ == "__main__":
 
     if torch.distributed.get_rank() == 0:
         import debugpy
-        debugpy.listen(('0.0.0.0', 5678))
+        debugpy.listen(('0.0.0.0', 5679))
         print("waiting for attach")
         debugpy.wait_for_client()
 

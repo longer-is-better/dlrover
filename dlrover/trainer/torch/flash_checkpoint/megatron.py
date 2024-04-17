@@ -22,9 +22,9 @@ import torch.distributed as dist
 from dlrover.python.common.log import default_logger as logger
 
 try:
-    from megatron import get_args
-    from megatron.checkpointing import load_checkpoint as megatron_load
-    from megatron.checkpointing import save_checkpoint as megatron_save
+    from megatron.training import get_args
+    from megatron.training.checkpointing import load_checkpoint as megatron_load
+    from megatron.training.checkpointing import save_checkpoint as megatron_save
 except ImportError:
     logger.warning("Please check the magatron.checkpointing exists.")
 
@@ -215,7 +215,7 @@ def load_checkpoint(
     """
     args = get_args()
     checkpointer = MegatronCheckpointer.singleton_instance(
-        args.save, storge=storage, comm_backend=comm_backend
+        args.save, storage=storage, comm_backend=comm_backend
     )
     torch.load = checkpointer.load
     iteration = megatron_load(
