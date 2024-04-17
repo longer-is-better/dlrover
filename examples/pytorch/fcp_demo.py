@@ -18,6 +18,8 @@ We can start a DDP job by
 ```
 pip install dlrover[torch] -U
 dlrover-run --max_restarts=2 --nproc_per_node=2 fcp_demo.py
+
+PYTHONPATH=$PYTHONPATH:$PWD:/lpai/dlrover/dlrover/proto python dlrover/trainer/torch/main.py --max_restarts=2 --nproc_per_node=2 examples/pytorch/fcp_demo.py
 ```
 """
 
@@ -62,6 +64,13 @@ if __name__ == "__main__":
         dist.init_process_group("gloo", timeout=timedelta(seconds=120))
     input_dim = 1024
     batch_size = 2048
+
+
+    if torch.distributed.get_rank() == 0:
+        import debugpy
+        debugpy.listen(('0.0.0.0', 5678))
+        print("waiting for attach")
+        debugpy.wait_for_client()
 
     device = torch.device("cuda" if use_cuda else "cpu")
     x = torch.rand(batch_size, input_dim).to(device)
